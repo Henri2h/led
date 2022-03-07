@@ -22,6 +22,24 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+uint32_t precValue = 0;
+uint32_t diff = 0;
+
+void affichage_led(void){
+	//Refresh
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+
+	//Write
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+	if (precValue>1800) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+	}
+	else if (precValue>2000) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+	}
+}
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,8 +63,7 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
-uint32_t precValue = 0;
-uint32_t diff = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -112,6 +129,8 @@ int main(void)
 	sprintf(MSG, "Ticks = %d\n\r", diff);
 	HAL_UART_Transmit(&huart2, MSG, sizeof(MSG), 3000);
 	HAL_Delay(100);
+
+	affichage_led();
   }
   /* USER CODE END 3 */
 }
@@ -262,7 +281,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED3_Pin|LED2_Pin|LED1_Pin|LED0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PA8 */
   GPIO_InitStruct.Pin = GPIO_PIN_8;
@@ -272,12 +291,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LED3_Pin */
-  GPIO_InitStruct.Pin = LED3_Pin;
+  /*Configure GPIO pins : LED3_Pin LED2_Pin LED1_Pin LED0_Pin */
+  GPIO_InitStruct.Pin = LED3_Pin|LED2_Pin|LED1_Pin|LED0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
